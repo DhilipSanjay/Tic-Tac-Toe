@@ -39,10 +39,17 @@ def start_game():
             recvDataDecode = recvData.decode()
 
             if recvDataDecode == "Input":
-                x = int(input("Enter the x coordinate:"))
-                y = int(input("Enter the y coordinate:"))
-                coordinates = str(x)+"," + str(y)
-                s.send(coordinates.encode())
+                failed = 1
+                while failed:
+                    try:
+                        x = int(input("Enter the x coordinate:"))
+                        y = int(input("Enter the y coordinate:"))
+                        coordinates = str(x)+"," + str(y)
+                        s.send(coordinates.encode())
+                        failed = 0
+                    except:
+                        print("Error occured....Try again")
+                
 
             elif recvDataDecode == "Error":
                 print("Error occured! Try again..")
@@ -61,7 +68,7 @@ def start_game():
                 print(recvDataDecode)
         except KeyboardInterrupt:
             print("\nKeyboard Interrupt")
-            time.sleep(2)
+            time.sleep(1)
             break
 
 start_player()

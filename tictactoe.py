@@ -12,7 +12,7 @@ def print_matrix():
             if matrix[i][j] == playerOne:
                 current = "X"
             elif matrix[i][j] == playerTwo:
-                current = "Y"
+                current = "O"
             print(current, end = "\t")
         print("")
 
