@@ -31,7 +31,7 @@ titleColor = (0, 0, 0)
 subtitleColor = (0, 0, 0)
 lineColor = (0, 0, 0)
 
-def buildScreen(player, playerColor = titleColor):
+def buildScreen(string, playerColor = titleColor):
     screen.fill(backgroundColor)
     
     #vertical lines
@@ -43,8 +43,8 @@ def buildScreen(player, playerColor = titleColor):
 
     title = bigfont.render("TIC TAC TOE", True, titleColor)
     screen.blit(title, (110, 0))
-    title = smallfont.render(str.upper(player), True, playerColor)
-    screen.blit(title, (150, 70))
+    subtitle = smallfont.render(str.upper(string), True, playerColor)
+    screen.blit(subtitle, (150, 70))
 
 def centerMessage(msg, color = titleColor):
     pos = (100, 480)
