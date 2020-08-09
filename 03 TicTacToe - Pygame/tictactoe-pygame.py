@@ -28,10 +28,10 @@ bigfont = pygame.font.Font('freesansbold.ttf', 64)
 smallfont = pygame.font.Font('freesansbold.ttf', 32)
 backgroundColor = (255, 255, 255)
 titleColor = (0, 0, 0)
-subtitleColor = (0, 0, 0)
+subtitleColor = (128, 0, 255)
 lineColor = (0, 0, 0)
 
-def buildScreen(string, playerColor = titleColor):
+def buildScreen(string, playerColor = subtitleColor):
     screen.fill(backgroundColor)
     
     #vertical lines

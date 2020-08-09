@@ -4,7 +4,7 @@ import time
 import threading
 
 s = socket.socket()
-host = "localhost" #input("Enter the server IP:")
+host = input("Enter the server IP:")
 port = 9999
 
 playerOne = 1
