@@ -2,49 +2,27 @@ import pygame
 import socket
 import time
 import threading
-from queue import Queue
 
 s = socket.socket()
-host = input("Enter the server IP:")
+host = "localhost" #input("Enter the server IP:")
 port = 9999
 
 playerOne = 1
 playerOneColor = (255, 0, 0)
 playerTwo = 2
 playerTwoColor = (0, 0, 255)
-player = ""
-msg = ""
+bottomMsg = ""
+msg = "Waiting for peer"
+currentPlayer = 0
+xy = (-1, -1)
+allow = 0 #allow handling mouse events
 matrix = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
-#Threads
-numOfThreads = 2
-jobNumber = [1, 2] 
-queue = Queue()
-
 #Create worker threads
-def create_workers():
-    for _ in range(numOfThreads):
-        t = threading.Thread(target=work) #argument - target function
-        t.daemon = True
-        t.start()
-
-
-def create_jobs():
-    for x in jobNumber:
-        queue.put(x)
-    
-    queue.join()
-
-#performs the next job in the queue
-def work():
-    while True:
-        currentJob = queue.get()
-        if currentJob == 1:
-            start_player()
-        if currentJob == 2:
-            accept_msg()
-        queue.task_done()
-
+def create_thread(target):
+    t = threading.Thread(target = target) #argument - target function
+    t.daemon = True
+    t.start()
 
 #initialize
 pygame.init()
@@ -65,12 +43,16 @@ bigfont = pygame.font.Font('freesansbold.ttf', 64)
 smallfont = pygame.font.Font('freesansbold.ttf', 32)
 backgroundColor = (255, 255, 255)
 titleColor = (0, 0, 0)
-subtitleColor = (0, 0, 0)
+subtitleColor = (128, 0, 255)
 lineColor = (0, 0, 0)
 
-def buildScreen(player, string, playerColor = titleColor):
+def buildScreen(bottomMsg, string, playerColor = subtitleColor):
     screen.fill(backgroundColor)
-    
+    if "One" in string or "1" in string:
+        playerColor = playerOneColor
+    elif "Two" in string or "2" in string:
+        playerColor = playerTwoColor
+
     #vertical lines
     pygame.draw.line(screen, lineColor, (250-2, 150), (250-2, 450), 4)
     pygame.draw.line(screen, lineColor, (350-2, 150), (350-2, 450), 4)
@@ -82,11 +64,15 @@ def buildScreen(player, string, playerColor = titleColor):
     screen.blit(title, (110, 0))
     subtitle = smallfont.render(str.upper(string), True, playerColor)
     screen.blit(subtitle, (150, 70))
-    centerMessage(player, playerColor)
+    centerMessage(bottomMsg, playerColor)
 
 def centerMessage(msg, color = titleColor):
     pos = (100, 480)
     # screen.fill(backgroundColor)
+    if "One" in msg or "1" in msg:
+        color = playerOneColor
+    elif "Two" in msg or "2" in msg:
+        color = playerTwoColor
     msgRendered = smallfont.render(msg, True, color)
     screen.blit(msgRendered, pos)
 
@@ -111,98 +97,122 @@ def printMatrix(matrix):
                 color = playerTwoColor
             printCurrent(current, (x, y), color)
 
+def validate_input(x, y):
+    if x > 3 or y > 3:
+        print("\nOut of bound! Enter again...\n")
+        return False
+    elif matrix[x][y] != 0:
+        print("\nAlready entered! Try again...\n")
+        return False
+    return True
+    
 def handleMouseEvent(pos):
     x = pos[0]
     y = pos[1]
+    global currentPlayer
+    global xy
     if(x < 150 or x > 450 or y < 150 or y > 450):
-        return
+        xy = (-1, -1)
     else:
         # When x increases, column changes
         col = int(x/100 - 1.5)
         # When y increases, row changes
         row = int(y/100 - 1.5)
         print("({}, {})".format(row,col))
-        return row,col
-
-def buildFinalScreen(msg):
-    color = (0, 255, 0)
-    # if result == 1:
-    #     msg = "Player one is the winner!!"
-    #     color = playerOneColor
-    # elif result == 2:
-    #     msg = "Player two is the winner!!"
-    #     color = playerTwoColor
-    # elif i >= 9:
-    #     msg = "Draw game!! Try again later!"
-    buildScreen(msg, "~~~Game Over~~~", color)
+        if validate_input(row, col):
+            matrix[row][col] = currentPlayer
+            xy = (row,col)
 
 def start_player():
-    global player
+    global currentPlayer
+    global bottomMsg
     try:
         s.connect((host, port))
         print("Connected to :", host, ":", port)
         recvData = s.recv(2048 * 10)
-        player = recvData.decode()
+        bottomMsg = recvData.decode()
+        if "1" in bottomMsg:
+            currentPlayer = 1
+        else:
+            currentPlayer =2
         start_game()
         s.close()
     except socket.error as e:
         print("Socket connection error:", e) 
 
-
-
 def start_game():
     running = True
     global msg
+    global matrix
+    global bottomMsg
+    create_thread(accept_msg)
     while running: 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                x, y = handleMouseEvent(pos)
+                if allow:
+                    handleMouseEvent(pos)
     
-        buildScreen(player, msg)                      
+        if msg == "":
+            break
+        
+        buildScreen(bottomMsg, msg)                      
         printMatrix(matrix) 
         pygame.display.update()
-
 
 def accept_msg():
     global matrix
     global msg
-    try: 
-        recvData = s.recv(2048 * 10)
-        recvDataDecode = recvData.decode()
-        buildScreen(player, recvDataDecode)
+    global bottomMsg 
+    global allow
+    global xy
+    while True:
+        try: 
+            recvData = s.recv(2048 * 10)
+            recvDataDecode = recvData.decode()
+            buildScreen(bottomMsg, recvDataDecode)
 
-        if recvDataDecode == "Input":
-            failed = 1
-            x = None
-            y = None
-            while failed:
-                try:
-                    coordinates = str(1)+"," + str(2)
-                    s.send(coordinates.encode())
-                    failed = 0
-                except:
-                    print("Error occured....Try again")
+            if recvDataDecode == "Input":
+                failed = 1
+                allow = 1
+                xy = (-1, -1)
+                while failed:
+                    try:
+                        if xy != (-1, -1):
+                            coordinates = str(xy[0])+"," + str(xy[1])
+                            s.send(coordinates.encode())
+                            failed = 0
+                            allow = 0
+                    except:
+                        print("Error occured....Try again")
 
-        elif recvDataDecode == "Error":
-            print("Error occured! Try again..")
-        
-        elif recvDataDecode == "Matrix":
-            print(recvDataDecode)
-            matrixRecv = s.recv(2048 * 100)
-            matrixRecvDecoded = matrixRecv.decode("utf-8")
-            matrix = eval(matrixRecvDecoded)
+            elif recvDataDecode == "Error":
+                print("Error occured! Try again..")
+            
+            elif recvDataDecode == "Matrix":
+                print(recvDataDecode)
+                matrixRecv = s.recv(2048 * 100)
+                matrixRecvDecoded = matrixRecv.decode("utf-8")
+                matrix = eval(matrixRecvDecoded)
 
-        elif recvDataDecode == "Over":
-            msgRecv = s.recv(2048 * 100)
-            msgRecvDecoded = msgRecv.decode("utf-8")
-            msg = msgRecvDecoded
+            elif recvDataDecode == "Over":
+                msgRecv = s.recv(2048 * 100)
+                msgRecvDecoded = msgRecv.decode("utf-8")
+                bottomMsg = msgRecvDecoded
+                msg = "~~~Game Over~~~"
 
-    except:
-        print("Error occured")
+            else:
+                msg = recvDataDecode
 
+        except KeyboardInterrupt:
+            print("\nKeyboard Interrupt")
+            time.sleep(1)
+            break
 
-create_workers()
-create_jobs()
+        except:
+            print("Error occured")
+            break
+
+start_player()

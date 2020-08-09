@@ -14,7 +14,8 @@ playerTwo = 2
 playerConn = list()
 playerAddr = list()       
 
-
+#server side validation is disabled to reduce latency
+'''
 def validate_input(x, y, conn):
     if x > 3 or y > 3:
         print("\nOut of bound! Enter again...\n")
@@ -25,6 +26,7 @@ def validate_input(x, y, conn):
         conn.send("Error".encode())
         return False
     return True
+'''
 
 def get_input(currentPlayer):
     if currentPlayer == playerOne:
@@ -35,25 +37,19 @@ def get_input(currentPlayer):
         conn = playerConn[1]
     print(player)
     send_common_msg(player)
-    failed = 1
-    while failed:
-        try:
-            conn.send("Input".encode())
-            data = conn.recv(2048 * 10)
-            conn.settimeout(20)
-            dataDecoded = data.decode().split(",")
-            x = int(dataDecoded[0])
-            y = int(dataDecoded[1])
-            if validate_input(x, y, conn):
-                matrix[x][y] = currentPlayer
-                failed = 0  
-                send_common_msg("Matrix")
-                send_common_msg(str(matrix))
-        except:
-            conn.send("Error".encode())
-            print("Error occured! Try again..")
-
-        
+    try:
+        conn.send("Input".encode())
+        data = conn.recv(2048 * 10)
+        conn.settimeout(20)
+        dataDecoded = data.decode().split(",")
+        x = int(dataDecoded[0])
+        y = int(dataDecoded[1])
+        matrix[x][y] = currentPlayer
+        send_common_msg("Matrix")
+        send_common_msg(str(matrix))
+    except:
+        conn.send("Error".encode())
+        print("Error occured! Try again..")
 
 def check_rows():
     # print("Checking rows")
@@ -118,13 +114,16 @@ def accept_players():
             playerConn.append(conn)
             playerAddr.append(addr)
             print("Player {} - [{}:{}]".format(i+1, addr[0], str(addr[1])))
-        
+    
         start_game()
         s.close()
     except socket.error as e:
-        print("Player connection error", e)   
-    except:
-        print("Error occurred")
+        print("Player connection error", e)
+    except KeyboardInterrupt:
+            print("\nKeyboard Interrupt")
+            exit()
+    except Exception as e:
+        print("Error occurred:", e)
 
 def start_game():
     result = 0
@@ -138,14 +137,16 @@ def start_game():
         i = i + 1
         # print("Current count", i ,result == 0 and i < 9, "Result = ", result)
     
+    send_common_msg("Over")
+
     if result == 1:
-        lastmsg = "Player one is the winner!!"
+        lastmsg = "Player One is the winner!!"
     elif result == 2:
-        lastmsg = "Player two is the winner!!"
+        lastmsg = "Player Two is the winner!!"
     else:
         lastmsg = "Draw game!! Try again later!"
 
-    send_common_msg(lastmsg.encode())
+    send_common_msg(lastmsg)
     time.sleep(10)
     for conn in playerConn:
         conn.close()
