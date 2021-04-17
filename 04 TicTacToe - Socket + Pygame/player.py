@@ -202,7 +202,7 @@ def accept_msg():
                 msgRecvDecoded = msgRecv.decode("utf-8")
                 bottomMsg = msgRecvDecoded
                 msg = "~~~Game Over~~~"
-
+                break
             else:
                 msg = recvDataDecode
 
