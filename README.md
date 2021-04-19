@@ -46,12 +46,9 @@ python server.py
 ---
 
 ## Screenshots
-
-### Player 1
-![Player 1](images/Player1.png)
-
-### Player 2
-![Player 2](images/Player2.png)
+Player 1         |  Player 2
+:-------------------------:|:-------------------------:
+<img src="images/Player1.png" width="90%"> | <img src="images/Player2.png" width="90%">
 
 ### Player 1 Wins
 ![Player 1 Wins](images/Player1Wins.png)
