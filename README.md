@@ -1,6 +1,6 @@
 # Tic-Tac-Toe
 - Tic Tac Toe game with socket programming and pygame.
-- It can be played over a network!
+- Players can compete against each other over a network by connecting to the server.
 
 ## Installing Packages
 - Install the following package dependencies using pip:
