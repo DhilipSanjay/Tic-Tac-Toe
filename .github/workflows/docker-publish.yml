@@ -1,0 +1,40 @@
+name: Docker Build and Publish
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  build-and-publish-docker-image:
+
+    runs-on: ubuntu-latest
+    
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build a docker image
+        run: |
+          docker build -t vladisto100/tic-tac-toe:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'vladisto100/tic-tac-toe:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Publish Docker image
+        if: ${{ success() }}
+        run: |
+          docker push vladisto100/tic-tac-toe:${{ github.sha }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
