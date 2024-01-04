@@ -2,9 +2,15 @@ import pygame
 import socket
 import time
 import threading
+import sys
 
 s = socket.socket()
-host = input("Enter the server IP:")
+
+if len(sys.argv) > 1:
+    host = sys.argv[1]
+else:
+    host = "localhost"
+
 port = 9999
 
 playerOne = 1
@@ -37,7 +43,7 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Tic Tac Toe")
 
 # set icon
-icon = pygame.image.load("tictactoe.png")
+icon = pygame.image.load("images/tictactoe.png")
 pygame.display.set_icon(icon)
 
 # fonts
