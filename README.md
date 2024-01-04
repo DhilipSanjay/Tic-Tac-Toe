@@ -13,13 +13,11 @@ pip install pygame
 ## How to Play?
 - Clone the Repository
 ```
-git clone https://github.com/DhilipSanjay/Tic-Tac-Toe.git
+git clone https://github.com/vladi2703/Tic-Tac-Toe.git
 ```
-- Move to the Directory `04 TicTacToe - Socket + Pygame`
-```
-cd "Tic-Tac-Toe\04 TicTacToe - Socket + Pygame"
-```
+
 - Start the Server
+
 ```
 python server.py
 ```
@@ -46,9 +44,9 @@ python server.py
 ---
 
 ## Screenshots
-Player 1         |  Player 2
-:-------------------------:|:-------------------------:
-<img src="images/Player1.png" width="90%"> | <img src="images/Player2.png" width="90%">
+|                  Player 1                  |                  Player 2                  |
+| :----------------------------------------: | :----------------------------------------: |
+| <img src="images/Player1.png" width="90%"> | <img src="images/Player2.png" width="90%"> |
 
 ### Player 1 Wins
 ![Player 1 Wins](images/Player1Wins.png)
@@ -58,10 +56,5 @@ Player 1         |  Player 2
 
 ### Draw Game
 ![Draw Game](images/DrawGame.png)
-
----
-
-### Note
-Feel free to play the other versions of Tic Tac Toe in this repo *(on Terminal, on Terminal with Socket)*.
 
 ---
