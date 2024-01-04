@@ -22,7 +22,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build a docker image
         run: |
+<<<<<<< HEAD
           docker build -t vladisto100/tic-tac-toe:${{ github.sha }} .
+=======
+          docker build -f server/Dockerfile -t vladisto100/tic-tac-toe:server-${{ github.sha }} .
+>>>>>>> 3ab8178 (added docker publish logic)
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
