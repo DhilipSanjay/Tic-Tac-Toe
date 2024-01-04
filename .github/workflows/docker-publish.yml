@@ -22,23 +22,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build a docker image
         run: |
-<<<<<<< HEAD
-          docker build -t vladisto100/tic-tac-toe:${{ github.sha }} .
-=======
           docker build -f server/Dockerfile -t vladisto100/tic-tac-toe:server-${{ github.sha }} .
->>>>>>> 3ab8178 (added docker publish logic)
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'vladisto100/tic-tac-toe:${{ github.sha }}'
+          image-ref: 'vladisto100/tic-tac-toe:server-${{ github.sha }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
       - name: Publish Docker image
         if: ${{ success() }}
         run: |
-          docker push vladisto100/tic-tac-toe:${{ github.sha }}
+          docker push vladisto100/tic-tac-toe:server-${{ github.sha }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
