@@ -15,4 +15,4 @@ COPY player.py .
 COPY images/ ./images
 
 # Run player.py when the container launches
-CMD ["python", "./player.py", "192.168.1.100"]
+CMD ["python", "./player.py", "172.17.0.1"]
