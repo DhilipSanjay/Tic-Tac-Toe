@@ -51,8 +51,8 @@ jobs:
         if: ${{ success() }}
         run: |
           docker push vladisto100/tic-tac-toe:server-${{ github.sha }}
-          docker push vladisto100/tic-tac-toe:client-${{ github.sha }} .
-          docker push vladisto100/tic-tac-toe:client-terminal-${{ github.sha }} .
+          docker push vladisto100/tic-tac-toe:client-${{ github.sha }} 
+          docker push vladisto100/tic-tac-toe:client-terminal-${{ github.sha }} 
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
