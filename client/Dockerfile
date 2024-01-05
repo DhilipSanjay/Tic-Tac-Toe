@@ -5,14 +5,14 @@ FROM python:3.8
 WORKDIR /usr/src/app
 
 # Install Pygame
-COPY requirements.txt ./
+COPY client/requirements.txt ./
 RUN pip install -r requirements.txt 
 
 # Copy the player script into the container at /usr/src/app
-COPY player.py .
+COPY client/player.py .
 
 # Copy the images directory if necessary
-COPY images/ ./images
+COPY client/images/ ./images
 
 # Run player.py when the container launches
 CMD ["python", "./player.py", "172.17.0.1"]
