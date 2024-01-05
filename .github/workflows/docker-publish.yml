@@ -43,7 +43,7 @@ jobs:
       - name: Run Trivy vulnerability scanner for client-terminal
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'vladisto100/tic-tac-toe:client-terninal-${{ github.sha }}'
+          image-ref: 'vladisto100/tic-tac-toe:client-terminal-${{ github.sha }}'
           format: 'sarif'
           output: 'trivy-results-client-terminal.sarif'
 
