@@ -20,21 +20,39 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build a docker image
+      - name: Build a docker images for the server and the client versions
         run: |
           docker build -f server/Dockerfile -t vladisto100/tic-tac-toe:server-${{ github.sha }} .
+          docker build -f client/Dockerfile -t vladisto100/tic-tac-toe:client-${{ github.sha }} .
+          docker build -f client-terminal/Dockerfile -t vladisto100/tic-tac-toe:client-terminal-${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner for server
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'vladisto100/tic-tac-toe:server-${{ github.sha }}'
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          output: 'trivy-results-server.sarif'
 
-      - name: Publish Docker image
+      - name: Run Trivy vulnerability scanner for client 
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'vladisto100/tic-tac-toe:client-${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results-client.sarif'
+
+      - name: Run Trivy vulnerability scanner for client-terminal
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'vladisto100/tic-tac-toe:client-terninal-${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results-client-terminal.sarif'
+
+      - name: Publish Docker images
         if: ${{ success() }}
         run: |
           docker push vladisto100/tic-tac-toe:server-${{ github.sha }}
+          docker push vladisto100/tic-tac-toe:client-${{ github.sha }} .
+          docker push vladisto100/tic-tac-toe:client-terminal-${{ github.sha }} .
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
