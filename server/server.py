@@ -14,7 +14,7 @@ playerConn = list()
 playerAddr = list()
 
 # server side validation is disabled to reduce latency
-'''
+"""
 def validate_input(x, y, conn):
     if x > 3 or y > 3:
         print("\nOut of bound! Enter again...\n")
@@ -25,7 +25,7 @@ def validate_input(x, y, conn):
         conn.send("Error".encode())
         return False
     return True
-'''
+"""
 
 
 def get_input(currentPlayer):
@@ -94,6 +94,7 @@ def check_winner():
         result = check_diagonals()
     return result
 
+
 # Socket program
 
 
@@ -115,12 +116,12 @@ def accept_players():
     try:
         for i in range(2):
             conn, addr = s.accept()
-            msg = "<<< You are player {} >>>".format(i+1)
+            msg = "<<< You are player {} >>>".format(i + 1)
             conn.send(msg.encode())
 
             playerConn.append(conn)
             playerAddr.append(addr)
-            print("Player {} - [{}:{}]".format(i+1, addr[0], str(addr[1])))
+            print("Player {} - [{}:{}]".format(i + 1, addr[0], str(addr[1])))
 
         start_game()
         s.close()
@@ -137,7 +138,7 @@ def start_game():
     result = 0
     i = 0
     while result == 0 and i < 9:
-        if (i % 2 == 0):
+        if i % 2 == 0:
             get_input(playerOne)
         else:
             get_input(playerTwo)
