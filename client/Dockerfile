@@ -1,8 +1,10 @@
-FROM python:3.13.0a2-slim
+FROM python:3.13.0a2
 
 WORKDIR /usr/src/app
 
 COPY client/requirements.txt ./
+
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt 
 
 COPY client/player.py .
