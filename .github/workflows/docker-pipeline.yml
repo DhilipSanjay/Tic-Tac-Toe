@@ -2,8 +2,9 @@ name: Docker Build, Scan and Publish
 
 on:
   push:
-    branches:
-      - master 
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
  
 jobs:
   setup:
