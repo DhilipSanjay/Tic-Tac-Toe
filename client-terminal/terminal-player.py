@@ -54,8 +54,8 @@ def start_game():
                         coordinates = str(x) + "," + str(y)
                         s.send(coordinates.encode())
                         failed = 0
-                    except:
-                        print("Error occured....Try again")
+                    except ValueError:
+                        print("Error occurred....Try again")
 
             elif recvDataDecode == "Error":
                 print("Error occured! Try again..")

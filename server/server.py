@@ -1,5 +1,4 @@
 import socket
-import pickle
 import time
 
 s = socket.socket()
@@ -48,9 +47,10 @@ def get_input(currentPlayer):
         matrix[x][y] = currentPlayer
         send_common_msg("Matrix")
         send_common_msg(str(matrix))
-    except:
+    except Exception as e:
         conn.send("Error".encode())
-        print("Error occured! Try again..")
+        print("Error occurred! Try again..")
+        print(e)
 
 
 def check_rows():

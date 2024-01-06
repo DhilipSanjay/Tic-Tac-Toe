@@ -202,8 +202,8 @@ def accept_msg():
                             s.send(coordinates.encode())
                             failed = 0
                             allow = 0
-                    except:
-                        print("Error occured....Try again")
+                    except Exception as e:
+                        print("Error occurred: ", e)
 
             elif recvDataDecode == "Error":
                 print("Error occured! Try again..")
@@ -228,8 +228,8 @@ def accept_msg():
             time.sleep(1)
             break
 
-        except:
-            print("Error occured")
+        except Exception as e:
+            print("Error occurred:", e)
             break
 
 
