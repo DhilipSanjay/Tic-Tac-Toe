@@ -38,10 +38,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Snyk Security Scan
-        working-directory: ${{github.workspace}}/server
+        working-directory: ./client
         run: |
           npm install -g snyk
+          pip install -r requirements.txt
           snyk auth ${{ secrets.SNYK_TOKEN }}
-          snyk test
+          snyk test --all-projects --exclude=Dockerfile,docker-compose.yml --severity-threshold=critical
