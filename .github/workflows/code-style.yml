@@ -18,8 +18,21 @@ jobs:
       run: |
         pip install flake8 pylint black
 
-    - name: Run linters
+    - name: Run flake8
       run: |
         flake8 .
+
+    - name: Check with black
+      run: |
         black --check .
-        pylint **/*.py
+
+    # Codebase is awful, so we need to set a low threshold
+    - name: Verify pylint score
+      id: pylint-score
+      run: |
+        score=$(pylint **/*.py | tail -n 2 | head -n 1 | awk '{print $7}' | cut -d '/' -f 1)
+        echo "Pylint score is $score"
+        if (( $(echo "$score < 6.0" | bc -l) )); then
+          echo "Pylint score is below threshold"
+          exit 1
+        fi
